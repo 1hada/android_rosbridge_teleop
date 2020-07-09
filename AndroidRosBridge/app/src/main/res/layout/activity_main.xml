@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2020 Jonathan Sanabria
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainTcpActivity">
+
+
+    <TextView
+        android:id="@+id/Y_val"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#0003DAC5"
+        android:text="@string/hello_first_fragment"
+        android:textColor="@color/cardview_dark_background"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/X_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="208dp"
+        android:text="@string/X_add_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/Y_add"
+        app:layout_constraintTop_toBottomOf="@+id/Y_val" />
+
+    <Button
+        android:id="@+id/Y_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="208dp"
+        android:text="@string/Y_add_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Y_val" />
+
+    <Button
+        android:id="@+id/Z_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="208dp"
+        android:text="@string/Z_add_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/Y_add"
+        app:layout_constraintTop_toBottomOf="@+id/Y_val" />
+
+    <Button
+        android:id="@+id/X_sub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/X_sub_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/Y_sub"
+        app:layout_constraintTop_toBottomOf="@+id/X_add"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/Y_sub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Y_sub_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Y_add"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/Z_sub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Z_sub_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/Y_sub"
+        app:layout_constraintTop_toBottomOf="@+id/Z_add"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/X_val"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#0003DAC5"
+        android:text="@string/X_val_text"
+        android:textColor="@color/cardview_dark_background"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/Y_val"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/Z_val"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#0003DAC5"
+        android:text="@string/Z_val_text"
+        android:textColor="@color/cardview_dark_background"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/Y_val"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/declare_x"
+        android:layout_width="20dp"
+        android:layout_height="46dp"
+        android:layout_marginTop="63dp"
+        android:ems="10"
+        android:text="@string/x_axis_name"
+        app:layout_constraintBottom_toTopOf="@+id/X_val"
+        app:layout_constraintEnd_toStartOf="@+id/declare_y"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ip_host_port_full_Layout"
+        app:layout_constraintVertical_bias="0.125" />
+
+    <TextView
+        android:id="@+id/declare_y"
+        android:layout_width="20dp"
+        android:layout_height="46dp"
+        android:layout_marginTop="63dp"
+        android:ems="10"
+        android:text="@string/y_axis_name"
+        app:layout_constraintBottom_toTopOf="@+id/Y_val"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.524"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ip_host_port_full_Layout"
+        app:layout_constraintVertical_bias="0.125" />
+
+    <TextView
+        android:id="@+id/declare_z"
+        android:layout_width="20dp"
+        android:layout_height="46dp"
+        android:layout_marginTop="63dp"
+        android:ems="10"
+        android:text="@string/z_axis_name"
+        app:layout_constraintBottom_toTopOf="@+id/Z_val"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.554"
+        app:layout_constraintStart_toEndOf="@+id/declare_y"
+        app:layout_constraintTop_toBottomOf="@+id/ip_host_port_full_Layout"
+        app:layout_constraintVertical_bias="0.125" />
+
+    <Button
+        android:id="@+id/scanBtn"
+        android:layout_width="363dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="15dp"
+        android:layout_marginTop="20dp"
+        android:background="@android:color/holo_blue_light"
+        android:text="@string/connect_button_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/ip_host_port_full_Layout"
+        android:layout_width="409dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="136dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scanBtn">
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/ip_host_port_full"
+        android:layout_width="353dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="40dp"
+        android:hint="@string/hintHostPortFull"
+        app:layout_constraintBottom_toTopOf="@+id/ip_host_port_full_Layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scanBtn" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

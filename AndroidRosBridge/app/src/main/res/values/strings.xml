@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">AndroidRosBridge</string>
+
+    <string name="hello_first_fragment">0</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="X_add_text">+</string>
+    <string name="Y_add_text">+</string>
+    <string name="Z_add_text">+</string>
+    <string name="X_sub_text">--</string>
+    <string name="Y_sub_text">--</string>
+    <string name="Z_sub_text">--</string>
+    <string name="Z_val_text">0</string>
+    <string name="X_val_text">0</string>
+    <string name="x_axis_name">X</string>
+    <string name="y_axis_name">Y</string>
+    <string name="z_axis_name">Z</string>
+    <string name="scan_for_device_resource">Scan For Device</string>
+    <string name="hintHostPortFull">127.0.0.1:8080</string>
+    <string name="connect_button_text">Connect</string>
+
+</resources>
