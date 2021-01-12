@@ -34,9 +34,10 @@ class RosBridgeClient(private val host: String , private val port: Int) {
             if (isMessage) {
                 val c = Calendar.getInstance().time
                 var mymsg = ""
+                var myTopic = "\"/imu/data\","
                 if( operation.equals("advertise")){
                     mymsg = "{ \"op\": \"" + operation + "\"," +
-                            "  \"topic\":  \"/my_published_data\"," +
+                            "  \"topic\":  " + myTopic +
                             "  \"type\": " + rosBridgedataType +
                             "}"
                     // "  \"type\":  \"sensor_msgs/Imu\"" +
@@ -44,7 +45,7 @@ class RosBridgeClient(private val host: String , private val port: Int) {
                     // "  \"type\":  \"std_msgs/String\"" +
                 } else {
                     mymsg = "{ \"op\": \"" + operation + "\"," +
-                            "  \"topic\":  \"/my_published_data\"," +
+                            "  \"topic\":  " + myTopic +//  \"/my_published_data\"," +
                             "  \"msg\":  "+ data +
                             "}"
                     //"  \"msg\":  {\"data\": " + data + " }"+

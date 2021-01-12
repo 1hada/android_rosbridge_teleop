@@ -79,7 +79,7 @@ class MainTcpActivity: AppCompatActivity(), SensorEventListener  {
                     _ori_list[3] = event?.values?.get(3)!!
                 }
             }
-            //processMessage()
+            processMessage()
         }
     }
 
@@ -210,13 +210,22 @@ class MainTcpActivity: AppCompatActivity(), SensorEventListener  {
             var lin_accel_x: Float = _acc_list[0]
             var lin_accel_y: Float = _acc_list[1]
             var lin_accel_z: Float = _acc_list[2]
+            var lin_cov_xx: Float = 0.009604F
+            var lin_cov_yy: Float = 0.009604F
+            var lin_cov_zz: Float = 0.009604F
             var ang_vel_x: Float = _gyro_list[0]
             var ang_vel_y: Float = _gyro_list[1]
             var ang_vel_z: Float = _gyro_list[2]
+            var ang_cov_xx: Float = 4.0E-4F
+            var ang_cov_yy: Float = 4.0E-4F
+            var ang_cov_zz: Float = 4.0E-4F
             var ori_x: Float = _ori_list[0]
             var ori_y: Float = _ori_list[1]
             var ori_z: Float = _ori_list[2]
             var ori_w: Float = _ori_list[3]
+            var ori_cov_xx: Float = 0.001225F
+            var ori_cov_yy: Float = 0.001225F
+            var ori_cov_zz: Float = 0.001225F
             var dataAsImu = """{"header":{ "seq": %d, 
                         "stamp":  {
                             "secs": %d,
@@ -228,21 +237,25 @@ class MainTcpActivity: AppCompatActivity(), SensorEventListener  {
                             "y": %f,
                             "z": %f,
                             "w": %f
-                        }, "orientation_covariance": [ 0.0, 0.0, 0.0,   0.0, 0.0, 0.0,    0.0, 0.0, 0.0
+                        }, "orientation_covariance": [ %f, 0.0, 0.0,   0.0, %f, 0.0,    0.0, 0.0, %f
                         ], "angular_velocity": {
                             "x": %f,
                             "y": %f,
                             "z": %f
-                        }, "angular_velocity_covariance": [ 0.0, 0.0, 0.0,    0.0, 0.0, 0.0,    0.0, 0.0, 0.0
+                        }, "angular_velocity_covariance": [ %f, 0.0, 0.0,   0.0, %f, 0.0,    0.0, 0.0, %f
                         ], "linear_acceleration": {
                             "x": %f,
                             "y": %f,
                             "z": %f
-                        }, "linear_acceleration_covariance": [ 0.0, 0.0, 0.0,    0.0, 0.0, 0.0,    0.0, 0.0, 0.0
+                        }, "linear_acceleration_covariance": [ %f, 0.0, 0.0,   0.0, %f, 0.0,    0.0, 0.0, %f
                         ]}""".format(sequence_header_number, secs, nsecs, frame_id,
-                    ori_x, ori_y, ori_z, ori_w,
+                ori_x, ori_y, ori_z, ori_w,
+                lin_cov_xx, lin_cov_yy, lin_cov_zz,
                 ang_vel_x, ang_vel_y, ang_vel_z,
-                lin_accel_x, lin_accel_y, lin_accel_z)
+                ang_cov_xx, ang_cov_yy, ang_cov_zz,
+                lin_accel_x, lin_accel_y, lin_accel_z ,
+                ori_cov_xx, ori_cov_yy, ori_cov_zz
+            )
             mc!!.send(operation,rosBridgedataType, dataAsImu, true)
         }
         sequence_header_number = sequence_header_number + 1
