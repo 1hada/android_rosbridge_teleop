@@ -1,5 +1,6 @@
 package com.example.androidrosbridge
 
+import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.View
@@ -8,6 +9,15 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+
+import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
+import java.time.LocalDateTime
+import java.time.LocalDateTime.*
+
 /* Copyright (C) 2020 Jonathan Sanabria
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,17 +32,69 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-class MainTcpActivity: AppCompatActivity() {
+class MainTcpActivity: AppCompatActivity(), SensorEventListener  {
+
 
 
     private var buttonScan: Button? = null
     private var ip_full_input: EditText? = null
 
+    val rosBridgedataType: String? =  "\"sensor_msgs/Imu\"" //"\"geometry_msgs/PoseStamped\""
     val publish: String? = "publish"
     var advertise: String? = null
+    var sequence_header_number: Int = 0
+    var is_connected: Boolean? = false
 
     private var xyzList = arrayListOf<Float>(0.0F, 0.0F, 0.0F)
     private var coordinateScale = 1
+
+    /* START basic logic from https://github.com/thezealousfool/IMU-Android */
+    private lateinit var _sensorManager : SensorManager
+    private lateinit var _acc : Sensor
+    private lateinit var _gyro : Sensor
+    private lateinit var _ori : Sensor // is a quaternion
+    private var _acc_list = arrayListOf<Float>(0.0F, 0.0F, 0.0F)
+    private var _gyro_list = arrayListOf<Float>(0.0F, 0.0F, 0.0F)
+    private var _ori_list = arrayListOf<Float>(0.0F, 0.0F, 0.0F, 1.0F)
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+    }
+    override fun onSensorChanged(event: SensorEvent?) {
+        if(is_connected == true ) {
+            when (event?.sensor?.type) {
+                Sensor.TYPE_LINEAR_ACCELERATION -> {
+                    _acc_list[0] = event?.values?.get(0)!!
+                    _acc_list[1] = event?.values?.get(1)!!
+                    _acc_list[2] = event?.values?.get(2)!!
+                }
+                Sensor.TYPE_GYROSCOPE -> {
+                    _gyro_list[0] = event?.values?.get(0)!!
+                    _gyro_list[1] = event?.values?.get(1)!!
+                    _gyro_list[2] = event?.values?.get(2)!!
+                }
+                Sensor.TYPE_ROTATION_VECTOR -> {
+                    _ori_list[0] = event?.values?.get(0)!!
+                    _ori_list[1] = event?.values?.get(1)!!
+                    _ori_list[2] = event?.values?.get(2)!!
+                    _ori_list[3] = event?.values?.get(3)!!
+                }
+            }
+            //processMessage()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        _sensorManager.registerListener(this, _acc, SensorManager.SENSOR_DELAY_NORMAL)
+        _sensorManager.registerListener(this, _gyro, SensorManager.SENSOR_DELAY_NORMAL)
+        _sensorManager.registerListener(this, _ori, SensorManager.SENSOR_DELAY_NORMAL)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        _sensorManager.unregisterListener(this)
+    }
+    /* END basic logic from https://github.com/thezealousfool/IMU-Android */
 
     private var mc: RosBridgeClient? = null
 
@@ -53,6 +115,7 @@ class MainTcpActivity: AppCompatActivity() {
                 var port:Int = host_port_list[1].toInt() // 9090
                 mc = RosBridgeClient( host , port )
                 mc!!.run()
+                is_connected = true
             }
         })
 
@@ -69,6 +132,12 @@ class MainTcpActivity: AppCompatActivity() {
             countMe( 1 ,"-", R.id.Y_val ) }
         findViewById<Button>(R.id.Z_sub).setOnClickListener {
             countMe( 2 ,"-" , R.id.Z_val )}
+
+        /* from https://github.com/thezealousfool/IMU-Android */
+        _sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        _acc = _sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
+        _gyro = _sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
+        _ori = _sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
 
     }
 
@@ -94,26 +163,27 @@ class MainTcpActivity: AppCompatActivity() {
         processMessage()
     }
 
+    @SuppressLint("NewApi")
     private fun processMessage(){
         var operation = "publish"
         if( advertise == null ){
             advertise = "advertise"
             operation = advertise as String
         }
+        var secs: Int = (System.currentTimeMillis()*0.001).toInt()
+        var nsecs: Int = now().nano
+        var frame_id: String = "\"imu_link\""
         //val dataAsString = "\" %f, %f, %f \"".format(xyzList[0], xyzList[1], xyzList[2])
         //val dataAsMultiArray = "[ %f, %f, %f ]".format(xyzList[0], xyzList[1], xyzList[2])
-        var seq: Int = 0
-        var secs: Int = 0
-        var nsecs: Int = 0
-        var frame_id: String = "\"\""
-        var pos_x: Float = xyzList[0]
-        var pos_y: Float = xyzList[1]
-        var pos_z: Float = xyzList[2]
-        var ori_x: Float = 0F
-        var ori_y: Float = 0F
-        var ori_z: Float = 0F
-        var ori_w: Float = 1F
-        var dataAsPoseStamped = """{ "header": { "seq": %d, 
+        if( rosBridgedataType == "\"geometry_msgs/PoseStamped\"" ){
+            var pos_x: Float = xyzList[0]
+            var pos_y: Float = xyzList[1]
+            var pos_z: Float = xyzList[2]
+            var ori_x: Float = 0F
+            var ori_y: Float = 0F
+            var ori_z: Float = 0F
+            var ori_w: Float = 1F
+            var dataAsPoseStamped = """{ "header": { "seq": %d, 
                         "stamp":  {
                             "secs": %d,
                             "nsecs": %d
@@ -131,12 +201,54 @@ class MainTcpActivity: AppCompatActivity() {
                             "y": %f,
                             "z": %f,
                             "w": %f
-                        }}}""".format( seq, secs, nsecs, frame_id,
-            pos_x, pos_y, pos_z,
-            ori_x, ori_y, ori_z, ori_w )
-        mc!!.send( operation ,dataAsPoseStamped,true)
-        Toast.makeText(this, operation + dataAsPoseStamped , Toast.LENGTH_LONG).show()
-
+                        }}}""".format(sequence_header_number, secs, nsecs, frame_id,
+                    pos_x, pos_y, pos_z,
+                    ori_x, ori_y, ori_z, ori_w)
+            mc!!.send(operation,rosBridgedataType, dataAsPoseStamped, true)
+            Toast.makeText(this, operation + dataAsPoseStamped, Toast.LENGTH_LONG).show()
+        } else if( rosBridgedataType == "\"sensor_msgs/Imu\"" )  {
+            var lin_accel_x: Float = _acc_list[0]
+            var lin_accel_y: Float = _acc_list[1]
+            var lin_accel_z: Float = _acc_list[2]
+            var ang_vel_x: Float = _gyro_list[0]
+            var ang_vel_y: Float = _gyro_list[1]
+            var ang_vel_z: Float = _gyro_list[2]
+            var ori_x: Float = _ori_list[0]
+            var ori_y: Float = _ori_list[1]
+            var ori_z: Float = _ori_list[2]
+            var ori_w: Float = _ori_list[3]
+            var dataAsImu = """{"header":{ "seq": %d, 
+                        "stamp":  {
+                            "secs": %d,
+                            "nsecs": %d
+                        },
+                        "frame_id": %s
+                    }, "orientation": {
+                            "x": %f,
+                            "y": %f,
+                            "z": %f,
+                            "w": %f
+                        }, "orientation_covariance": [ 0.0, 0.0, 0.0,   0.0, 0.0, 0.0,    0.0, 0.0, 0.0
+                        ], "angular_velocity": {
+                            "x": %f,
+                            "y": %f,
+                            "z": %f
+                        }, "angular_velocity_covariance": [ 0.0, 0.0, 0.0,    0.0, 0.0, 0.0,    0.0, 0.0, 0.0
+                        ], "linear_acceleration": {
+                            "x": %f,
+                            "y": %f,
+                            "z": %f
+                        }, "linear_acceleration_covariance": [ 0.0, 0.0, 0.0,    0.0, 0.0, 0.0,    0.0, 0.0, 0.0
+                        ]}""".format(sequence_header_number, secs, nsecs, frame_id,
+                    ori_x, ori_y, ori_z, ori_w,
+                ang_vel_x, ang_vel_y, ang_vel_z,
+                lin_accel_x, lin_accel_y, lin_accel_z)
+            mc!!.send(operation,rosBridgedataType, dataAsImu, true)
+        }
+        sequence_header_number = sequence_header_number + 1
     }
+
+
+
 
 }

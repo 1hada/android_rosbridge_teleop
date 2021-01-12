@@ -29,7 +29,7 @@ class RosBridgeClient(private val host: String , private val port: Int) {
 
     }
 
-    fun send( operation: String? , data: String?, isMessage: Boolean) = Thread() {
+    fun send( operation: String? ,rosBridgedataType: String? , data: String?, isMessage: Boolean) = Thread() {
         if( this.socket != null ){
             if (isMessage) {
                 val c = Calendar.getInstance().time
@@ -37,8 +37,9 @@ class RosBridgeClient(private val host: String , private val port: Int) {
                 if( operation.equals("advertise")){
                     mymsg = "{ \"op\": \"" + operation + "\"," +
                             "  \"topic\":  \"/my_published_data\"," +
-                            "  \"type\":  \"geometry_msgs/PoseStamped\"" +
+                            "  \"type\": " + rosBridgedataType +
                             "}"
+                    // "  \"type\":  \"sensor_msgs/Imu\"" +
                     // "  \"type\":  \"std_msgs/Float32MultiArray\"" +
                     // "  \"type\":  \"std_msgs/String\"" +
                 } else {
